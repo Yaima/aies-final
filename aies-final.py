@@ -12,7 +12,7 @@ from itertools import cycle
 
 
 def STEP1():
-    df_por = pd.read_csv('dataset/student-por.csv', delimiter=';')
+    df_por = pd.read_csv('dataset/student-por.csv', delimiter=',')
     print(df_por.head(5))
     print("Number of records port: ", len(df_por))
     r, c = df_por.shape
