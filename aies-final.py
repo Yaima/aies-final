@@ -5,6 +5,7 @@ import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 import matplotlib
+from sklearn.preprocessing import KBinsDiscretizer
 
 import seaborn as sns
 from scipy.stats import pearsonr
@@ -26,8 +27,8 @@ def STEP1():
 def STEP2():
     df = pd.read_csv('dataset/student-por.csv', delimiter=',')
 
-    df.loc[df['sex'] == "M", ['sex']] = 'Male'
-    df.loc[df['sex'] == "F", ['sex']] = 'Female'
+    # df.loc[df['sex'] == "M", ['sex']] = 'Male'
+    # df.loc[df['sex'] == "F", ['sex']] = 'Female'
 
     df.loc[df['age'].between(15, 16, inclusive=True), ['age_group']] = '15-16'
     df.loc[df['age'].between(17, 18, inclusive=True), ['age_group']] = '17-18'
@@ -57,6 +58,11 @@ def STEP2():
         if x not in g3_unique:
             g3_unique.append(x)
 
+    age_unique.sort()
+    g1_unique.sort()
+    g2_unique.sort()
+    g3_unique.sort()
+
     print("Age: ", age_unique)
     print("G1: ", g1_unique)
     print("G2: ", g2_unique)
@@ -74,78 +80,70 @@ def STEP2():
     print("G3 Min: ", df['G3'].min())
     print("G3 Avg: ", df['G3'].mean())
 
-    df.loc[df['G1'].between(0, 5, inclusive=True), ['g1_group']] = '0-5'
-    df.loc[df['G1'].between(6, 10, inclusive=True), ['g1_group']] = '6-10'
-    df.loc[df['G1'].between(11, 15, inclusive=True), ['g1_group']] = '11-15'
-    df.loc[df['G1'].between(16, 19, inclusive=True), ['g1_group']] = '16-19'
+    bins = [0, 11, 19]
+    labels = ['0-11', '12-19']
 
-    df.loc[df['G2'].between(0, 5, inclusive=True), ['g2_group']] = '0-5'
-    df.loc[df['G2'].between(6, 10, inclusive=True), ['g2_group']] = '6-10'
-    df.loc[df['G2'].between(11, 15, inclusive=True), ['g2_group']] = '11-15'
-    df.loc[df['G2'].between(16, 19, inclusive=True), ['g2_group']] = '16-19'
+    df['G1'] = pd.cut(df.G1, bins=bins, labels=labels, include_lowest=True)
+    df['G2'] = pd.cut(df.G2, bins=bins, labels=labels, include_lowest=True)
+    df['G3'] = pd.cut(df.G3, bins=bins, labels=labels, include_lowest=True)
 
-    df.loc[df['G3'].between(0, 5, inclusive=True), ['g3_group']] = '0-5'
-    df.loc[df['G3'].between(6, 10, inclusive=True), ['g3_group']] = '6-10'
-    df.loc[df['G3'].between(11, 15, inclusive=True), ['g3_group']] = '11-15'
-    df.loc[df['G3'].between(16, 19, inclusive=True), ['g3_group']] = '16-19'
-
-    age_g1_freq = df.groupby(['age_group', 'g1_group']).size()
+    age_g1_freq = df.groupby(['age_group', 'G1']).size()
     age_g1_freq.to_csv('out/age_g1_freq.csv')
 
-    age_g2_freq = df.groupby(['age_group', 'g2_group']).size()
+    age_g2_freq = df.groupby(['age_group', 'G2']).size()
     age_g2_freq.to_csv('out/age_g2_freq.csv')
 
-    age_g3_freq = df.groupby(['age_group', 'g3_group']).size()
+    age_g3_freq = df.groupby(['age_group', 'G3']).size()
     age_g3_freq.to_csv('out/age_g3_freq.csv')
 
-    sex_g1_freq = df.groupby(['sex', 'g1_group']).size()
+    sex_g1_freq = df.groupby(['sex', 'G1']).size()
     sex_g1_freq.to_csv('out/sex_g1_freq.csv')
 
-    sex_g2_freq = df.groupby(['sex', 'g1_group']).size()
+    sex_g2_freq = df.groupby(['sex', 'G2']).size()
     sex_g2_freq.to_csv('out/sex_g2_freq.csv')
 
-    sex_g3_freq = df.groupby(['sex', 'g2_group']).size()
+    sex_g3_freq = df.groupby(['sex', 'G3']).size()
     sex_g3_freq.to_csv('out/sex_g3_freq.csv')
 
     age_g1_freq.plot.bar(stacked=False, color="royalblue")
-    plt.title('Age - Grade 1 Frequencies')
+    plt.title('Age - First Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
-    plt.xlabel('Frequency Groups')
+    plt.xlabel('Age - G1 Discretized')
     plt.savefig('out/age_g1_freq.png', bbox_inches='tight')
     plt.show()
 
     age_g2_freq.plot.bar(stacked=False, color="royalblue")
-    plt.title('Age - Grade 2 Frequencies')
+    plt.title('Age - Second Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
-    plt.xlabel('Frequency Groups')
+    plt.xlabel('Age - G2 Discretized')
     plt.savefig('out/age_g2_freq.png', bbox_inches='tight')
     plt.show()
 
     age_g3_freq.plot.bar(stacked=False, color="royalblue")
-    plt.title('Age - Grade 3 Frequencies')
+    plt.title('Age - Third Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
-    plt.xlabel('Frequency Groups')
+    plt.xlabel('Age - G3 Discretized')
     plt.savefig('out/age_g3_freq.png', bbox_inches='tight')
     plt.show()
 
     sex_g1_freq.plot.bar(stacked=False, color="lightblue")
-    plt.title('Sex - Grade 1 Frequencies')
+    plt.title('Sex - First Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
-    plt.xlabel('Frequency Groups')
+    plt.xlabel('Sex - G1 Discretized')
     plt.savefig('out/sex_g1_freq.png', bbox_inches='tight')
     plt.show()
 
     sex_g2_freq.plot.bar(stacked=False, color="lightblue")
-    plt.title('Sex - Grade 2 Frequencies')
+    plt.title('Sex - Second Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
-    plt.xlabel('Frequency Groups')
+    plt.xlabel('Sex - G2 Discretized')
     plt.savefig('out/sex_g2_freq.png', bbox_inches='tight')
     plt.show()
 
     sex_g3_freq.plot.bar(stacked=False, color="lightblue")
-    plt.title('Sex - Grade 3 Frequencies')
+    plt.title('Sex - Third Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
-    plt.xlabel('Frequency Groups')
+    plt.xlabel('Sex - G3 Discretized')
     plt.savefig('out/sex_g3_freq.png', bbox_inches='tight')
     plt.show()
 
