@@ -119,7 +119,7 @@ def STEP2():
     plt.show()
 
     age_g3_freq.plot.bar(stacked=False, color="royalblue")
-    plt.title('Age - Third Period Grade')
+    plt.title('Age - Final Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.xlabel('Age - G3 Discretized')
     plt.savefig('out/age_g3_freq.png', bbox_inches='tight')
@@ -140,7 +140,7 @@ def STEP2():
     plt.show()
 
     sex_g3_freq.plot.bar(stacked=False, color="lightblue")
-    plt.title('Sex - Third Period Grade')
+    plt.title('Sex - Final Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.xlabel('Sex - G3 Discretized')
     plt.savefig('out/sex_g3_freq.png', bbox_inches='tight')
