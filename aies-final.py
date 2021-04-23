@@ -80,7 +80,7 @@ def STEP2():
     print("G3 Avg: ", df['G3'].mean())
 
     bins = [0, 11, 19]
-    labels = ['0-11', '12-19']
+    labels = [0, 1]
 
     df['G1'] = pd.cut(df.G1, bins=bins, labels=labels, include_lowest=True)
     df['G2'] = pd.cut(df.G2, bins=bins, labels=labels, include_lowest=True)
@@ -104,21 +104,21 @@ def STEP2():
     sex_g3_freq = df.groupby(['sex', 'G3']).size()
     sex_g3_freq.to_csv('out/sex_g3_freq.csv')
 
-    age_g1_freq.plot.bar(stacked=False, color="royalblue")
+    age_g1_freq.plot.bar(stacked=False, color="salmon")
     plt.title('Age - First Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.xlabel('Age - G1 Discretized')
     plt.savefig('out/age_g1_freq.png', bbox_inches='tight')
     plt.show()
 
-    age_g2_freq.plot.bar(stacked=False, color="royalblue")
+    age_g2_freq.plot.bar(stacked=False, color="salmon")
     plt.title('Age - Second Period Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.xlabel('Age - G2 Discretized')
     plt.savefig('out/age_g2_freq.png', bbox_inches='tight')
     plt.show()
 
-    age_g3_freq.plot.bar(stacked=False, color="royalblue")
+    age_g3_freq.plot.bar(stacked=False, color="salmon")
     plt.title('Age - Final Grade')
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.xlabel('Age - G3 Discretized')
