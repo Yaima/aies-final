@@ -27,12 +27,11 @@ def STEP1():
 def STEP2():
     df = pd.read_csv('dataset/student-por.csv', delimiter=',')
 
-    # df.loc[df['sex'] == "M", ['sex']] = 'Male'
-    # df.loc[df['sex'] == "F", ['sex']] = 'Female'
+    df.loc[df['sex'] == "M", ['sex']] = 'Male'
+    df.loc[df['sex'] == "F", ['sex']] = 'Female'
 
-    df.loc[df['age'].between(15, 16, inclusive=True), ['age_group']] = '15-16'
-    df.loc[df['age'].between(17, 18, inclusive=True), ['age_group']] = '17-18'
-    df.loc[df['age'].between(19, 22, inclusive=True), ['age_group']] = '19-22'
+    df.loc[df['age'].between(15, 17, inclusive=True), ['age_group']] = '15-17'
+    df.loc[df['age'].between(18, 22, inclusive=True), ['age_group']] = '18-22'
 
     age_group_sex_freq = df.groupby(['age_group', 'sex']).size()
     age_group_sex_freq.to_csv('out/age_group_sex_freq.csv')
