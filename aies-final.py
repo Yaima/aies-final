@@ -6,6 +6,7 @@ import scipy as sp
 import matplotlib.pyplot as plt
 import matplotlib
 from sklearn.preprocessing import KBinsDiscretizer
+from sklearn.tree import DecisionTreeClassifier
 
 import seaborn as sns
 from scipy.stats import pearsonr
@@ -158,17 +159,52 @@ def STEP3():
 
 
 def STEP4():
-    df = pd.read_csv(r"dataset/", delimiter=',')
+    #school,sex,age,address,famsize,Pstatus,Medu,Fedu,Mjob,Fjob,reason,guardian,traveltime,studytime,failures,schoolsup,famsup,paid,activities,nursery,higher,internet,romantic,famrel,freetime,goout,Dalc,Walc,health,absences,G1,G2,G3
 
-    print("Number of records: ")
-    r, c = df.shape
-    print("rows: ", r)
-    print("columns: ", c)
-    print()
+    raw_df = pd.read_csv(r"dataset/student-por.csv", delimiter=',')
+    df = raw_df.replace({'higher': {'yes': True, 'no': False}})
+
+    # print("Number of records: ")
+    # r, c = df.shape
+    # print("rows: ", r)
+    # print("columns: ", c)
+    # print()
+
+    num_rows = int(len(df))
+
+    # split data into train and test sets
+    shuffled = df.sample(frac=1)
+    df_train = shuffled.iloc[:int(num_rows / 2)]
+    df_test = shuffled.iloc[int(num_rows / 2):]
+
+
+    # classify data Y in this case is G3. Features are G1 and G2,
+
+    features = ['failures', 'Medu', 'studytime', 'absences', 'G1', 'G2', 'higher']
+    y_feature = 'G3'
+
+    # create training data
+    df_train_x = df_train[features]
+    df_train_y = df_train[y_feature]
+
+    # create and train classifier
+    orig_classifier = DecisionTreeClassifier()
+    orig_classifier.fit(df_train_x, df_train_y)
+
+    # run classifier against the test set
+    df_test_x = df_test[features]
+    predicted = orig_classifier.predict(df_test_x)
+
+    df_test_x['Predicted Grade'] = predicted
+    df_test_x['Actual Grade'] = df_test[y_feature]
+
+    # TODO create a classifier for the data from Step 3.3
+
+    print(df_test_x.head())
 
 
 if __name__ == '__main__':
     # STEP1()
-    STEP2()
+    # STEP2()
     # STEP3()
-    # STEP4()
+    STEP4()
