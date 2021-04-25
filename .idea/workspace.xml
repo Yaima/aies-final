@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="45123549-a42b-493e-938f-fc9f2b86ece9" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dataset/credit_card.xls" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/aies-final.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/aies-final.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/aies-final.py" beforeDir="false" afterPath="$PROJECT_DIR$/aies-final.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/environment.yml" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +24,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/dataset" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
   </component>
@@ -98,6 +98,7 @@
       <workItem from="1618112870718" duration="296000" />
       <workItem from="1618113180095" duration="1262000" />
       <workItem from="1618114674009" duration="1957000" />
+      <workItem from="1619315296681" duration="780000" />
     </task>
     <servers />
   </component>

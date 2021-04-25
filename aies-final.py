@@ -149,13 +149,95 @@ def STEP2():
 
 
 def STEP3():
-    df = pd.read_csv(r"dataset/", delimiter=',')
+    df = pd.read_csv('dataset/student-por.csv', delimiter=',')
 
-    print("Number of records: ")
-    r, c = df.shape
-    print("rows: ", r)
-    print("columns: ", c)
-    print()
+    df.loc[df['sex'] == "M", ['sex']] = 'Male'
+    df.loc[df['sex'] == "F", ['sex']] = 'Female'
+
+    df.loc[df['age'].between(15, 17, inclusive=True), ['age_group']] = '15-17'
+    df.loc[df['age'].between(18, 22, inclusive=True), ['age_group']] = '18-22'
+
+    bins = [0, 11, 19]
+    labels = [0, 1]
+
+    df['G1'] = pd.cut(df.G1, bins=bins, labels=labels, include_lowest=True)
+    df['G2'] = pd.cut(df.G2, bins=bins, labels=labels, include_lowest=True)
+    df['G3'] = pd.cut(df.G3, bins=bins, labels=labels, include_lowest=True)
+
+    age_g1_freq = df.groupby(['age_group', 'G1']).size()
+    age_g2_freq = df.groupby(['age_group', 'G2']).size()
+    age_g3_freq = df.groupby(['age_group', 'G3']).size()
+    sex_g1_freq = df.groupby(['sex', 'G1']).size()
+    sex_g2_freq = df.groupby(['sex', 'G2']).size()
+    sex_g3_freq = df.groupby(['sex', 'G3']).size()
+
+    up_sex = 'Male'
+    up_age = '18-22'
+    p_sex = 'Female'
+    p_age = '15-17'
+
+    # statistical parity difference G1 and age
+    spd_g1_age = (age_g1_freq[up_age][1] / (age_g1_freq[up_age][1] + age_g1_freq[up_age][0])) - (
+            age_g1_freq[p_age][1] / (age_g1_freq[p_age][1] + age_g1_freq[p_age][0]))
+
+    # statistical parity difference G2 and age
+    spd_g2_age = (age_g2_freq[up_age][1] / (age_g2_freq[up_age][1] + age_g2_freq[up_age][0])) - (
+            age_g2_freq[p_age][1] / (age_g2_freq[p_age][1] + age_g2_freq[p_age][0]))
+
+    # statistical parity difference G3 and age
+    spd_g3_age = (age_g3_freq[up_age][1] / (age_g3_freq[up_age][1] + age_g3_freq[up_age][0])) - (
+            age_g3_freq[p_age][1] / (age_g3_freq[p_age][1] + age_g3_freq[p_age][0]))
+
+    # statistical parity difference G1 and sex
+    spd_g1_sex = (sex_g1_freq[up_sex][1] / (sex_g1_freq[up_sex][1] + sex_g1_freq[up_sex][0])) - (
+            sex_g1_freq[p_sex][1] / (sex_g1_freq[p_sex][1] + sex_g1_freq[p_sex][0]))
+
+    # statistical parity difference G1 and sex
+    spd_g2_sex = (sex_g2_freq[up_sex][1] / (sex_g2_freq[up_sex][1] + sex_g2_freq[up_sex][0])) - (
+            sex_g2_freq[p_sex][1] / (sex_g2_freq[p_sex][1] + sex_g2_freq[p_sex][0]))
+
+    # statistical parity difference G1 and sex
+    spd_g3_sex = (sex_g3_freq[up_sex][1] / (sex_g3_freq[up_sex][1] + sex_g3_freq[up_sex][0])) - (
+            sex_g3_freq[p_sex][1] / (sex_g3_freq[p_sex][1] + sex_g3_freq[p_sex][0]))
+
+    spd_data = [['G1', 'Age', spd_g1_age], ['G2', 'Age', spd_g2_age], ['G3', 'Age', spd_g3_age],
+                ['G1', 'Sex', spd_g1_sex], ['G2', 'Sex', spd_g2_sex], ['G3', 'Sex', spd_g3_sex]]
+
+    pd.DataFrame(spd_data,
+                 columns=['Dependent Variable', 'Protected Class Variable', 'Statistical Parity Difference']).to_csv(
+        'out/spd.csv', index=False)
+
+    # disparate impact G1 and age
+    di_g1_age = (age_g1_freq[up_age][1] / (age_g1_freq[up_age][1] + age_g1_freq[up_age][0])) / (
+            age_g1_freq[p_age][1] / (age_g1_freq[p_age][1] + age_g1_freq[p_age][0]))
+
+    # disparate impact G2 and age
+    d1_g2_age = (age_g2_freq[up_age][1] / (age_g2_freq[up_age][1] + age_g2_freq[up_age][0])) / (
+            age_g2_freq[p_age][1] / (age_g2_freq[p_age][1] + age_g2_freq[p_age][0]))
+
+    # disparate impact G3 and age
+    d1_g3_age = (age_g3_freq[up_age][1] / (age_g3_freq[up_age][1] + age_g3_freq[up_age][0])) / (
+            age_g3_freq[p_age][1] / (age_g3_freq[p_age][1] + age_g3_freq[p_age][0]))
+
+    # disparate impact G1 and sex
+    d1_g1_sex = (sex_g1_freq[up_sex][1] / (sex_g1_freq[up_sex][1] + sex_g1_freq[up_sex][0])) / (
+            sex_g1_freq[p_sex][1] / (sex_g1_freq[p_sex][1] + sex_g1_freq[p_sex][0]))
+
+    # disparate impact G1 and sex
+    d1_g2_sex = (sex_g2_freq[up_sex][1] / (sex_g2_freq[up_sex][1] + sex_g2_freq[up_sex][0])) / (
+            sex_g2_freq[p_sex][1] / (sex_g2_freq[p_sex][1] + sex_g2_freq[p_sex][0]))
+
+    # disparate impact G1 and sex
+    d1_g3_sex = (sex_g3_freq[up_sex][1] / (sex_g3_freq[up_sex][1] + sex_g3_freq[up_sex][0])) / (
+            sex_g3_freq[p_sex][1] / (sex_g3_freq[p_sex][1] + sex_g3_freq[p_sex][0]))
+
+    d1_data = [['G1', 'Age', di_g1_age], ['G2', 'Age', d1_g2_age], ['G3', 'Age', d1_g3_age],
+               ['G1', 'Sex', d1_g1_sex], ['G2', 'Sex', d1_g2_sex], ['G3', 'Sex', d1_g3_sex]]
+
+    pd.DataFrame(d1_data,
+                 columns=['Dependent Variable', 'Protected Class Variable', 'Disparate Impact']).to_csv(
+        'out/di.csv', index=False)
+
 
 
 def STEP4():
