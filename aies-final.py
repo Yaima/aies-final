@@ -212,32 +212,179 @@ def STEP3():
             age_g1_freq[p_age][1] / (age_g1_freq[p_age][1] + age_g1_freq[p_age][0]))
 
     # disparate impact G2 and age
-    d1_g2_age = (age_g2_freq[up_age][1] / (age_g2_freq[up_age][1] + age_g2_freq[up_age][0])) / (
+    di_g2_age = (age_g2_freq[up_age][1] / (age_g2_freq[up_age][1] + age_g2_freq[up_age][0])) / (
             age_g2_freq[p_age][1] / (age_g2_freq[p_age][1] + age_g2_freq[p_age][0]))
 
     # disparate impact G3 and age
-    d1_g3_age = (age_g3_freq[up_age][1] / (age_g3_freq[up_age][1] + age_g3_freq[up_age][0])) / (
+    di_g3_age = (age_g3_freq[up_age][1] / (age_g3_freq[up_age][1] + age_g3_freq[up_age][0])) / (
             age_g3_freq[p_age][1] / (age_g3_freq[p_age][1] + age_g3_freq[p_age][0]))
 
     # disparate impact G1 and sex
-    d1_g1_sex = (sex_g1_freq[up_sex][1] / (sex_g1_freq[up_sex][1] + sex_g1_freq[up_sex][0])) / (
+    di_g1_sex = (sex_g1_freq[up_sex][1] / (sex_g1_freq[up_sex][1] + sex_g1_freq[up_sex][0])) / (
             sex_g1_freq[p_sex][1] / (sex_g1_freq[p_sex][1] + sex_g1_freq[p_sex][0]))
 
-    # disparate impact G1 and sex
-    d1_g2_sex = (sex_g2_freq[up_sex][1] / (sex_g2_freq[up_sex][1] + sex_g2_freq[up_sex][0])) / (
+    # disparate impact G2 and sex
+    di_g2_sex = (sex_g2_freq[up_sex][1] / (sex_g2_freq[up_sex][1] + sex_g2_freq[up_sex][0])) / (
             sex_g2_freq[p_sex][1] / (sex_g2_freq[p_sex][1] + sex_g2_freq[p_sex][0]))
 
-    # disparate impact G1 and sex
-    d1_g3_sex = (sex_g3_freq[up_sex][1] / (sex_g3_freq[up_sex][1] + sex_g3_freq[up_sex][0])) / (
+    # disparate impact G3 and sex
+    di_g3_sex = (sex_g3_freq[up_sex][1] / (sex_g3_freq[up_sex][1] + sex_g3_freq[up_sex][0])) / (
             sex_g3_freq[p_sex][1] / (sex_g3_freq[p_sex][1] + sex_g3_freq[p_sex][0]))
 
-    d1_data = [['G1', 'Age', di_g1_age], ['G2', 'Age', d1_g2_age], ['G3', 'Age', d1_g3_age],
-               ['G1', 'Sex', d1_g1_sex], ['G2', 'Sex', d1_g2_sex], ['G3', 'Sex', d1_g3_sex]]
+    di_data = [['G1', 'Age', di_g1_age], ['G2', 'Age', di_g2_age], ['G3', 'Age', di_g3_age],
+               ['G1', 'Sex', di_g1_sex], ['G2', 'Sex', di_g2_sex], ['G3', 'Sex', di_g3_sex]]
 
-    pd.DataFrame(d1_data,
+    pd.DataFrame(di_data,
                  columns=['Dependent Variable', 'Protected Class Variable', 'Disparate Impact']).to_csv(
         'out/di.csv', index=False)
 
+    # re-weighting
+
+    # weights for G1 and age
+    w_pp = (age_g1_freq[p_age].sum() * (age_g1_freq[p_age][1] + age_g1_freq[up_age][1])) / (
+            age_g1_freq.values.sum() * age_g1_freq[p_age][1])
+    w_pu = (age_g1_freq[up_age].sum() * (age_g1_freq[p_age][1] + age_g1_freq[up_age][1])) / (
+            age_g1_freq.values.sum() * age_g1_freq[up_age][1])
+    w_np = (age_g1_freq[p_age].sum() * (age_g1_freq[p_age][0] + age_g1_freq[up_age][0])) / (
+            age_g1_freq.values.sum() * age_g1_freq[p_age][0])
+    w_nu = (age_g1_freq[up_age].sum() * (age_g1_freq[p_age][0] + age_g1_freq[up_age][0])) / (
+            age_g1_freq.values.sum() * age_g1_freq[up_age][0])
+
+    weights = [[w_pp, w_pu, w_np, w_nu]]
+    pd.DataFrame(weights,
+                 columns=['Positive outcome - Privileged Group', 'Positive outcome - Unprivileged Group',
+                          'Negative outcome - Privileged Group', 'Negative outcome - Unprivileged Group']).to_csv(
+        'out/weights_g1_age.csv', index=False)
+
+    # applying the weights to calculate spd and di
+    w_spd_g1_age = (w_pu * age_g1_freq[up_age][1] / (w_pu * age_g1_freq[up_age][1] + w_nu * age_g1_freq[up_age][0])) - (
+            w_pp * age_g1_freq[p_age][1] / (w_pp * age_g1_freq[p_age][1] + w_np * age_g1_freq[p_age][0]))
+    w_di_g1_age = (w_pu * age_g1_freq[up_age][1] / (w_pu * age_g1_freq[up_age][1] + w_nu * age_g1_freq[up_age][0])) / (
+            w_pp * age_g1_freq[p_age][1] / (w_pp * age_g1_freq[p_age][1] + w_np * age_g1_freq[p_age][0]))
+
+    # weights for G2 and age
+    w_pp = (age_g2_freq[p_age].sum() * (age_g2_freq[p_age][1] + age_g2_freq[up_age][1])) / (
+            age_g2_freq.values.sum() * age_g2_freq[p_age][1])
+    w_pu = (age_g2_freq[up_age].sum() * (age_g2_freq[p_age][1] + age_g2_freq[up_age][1])) / (
+            age_g2_freq.values.sum() * age_g2_freq[up_age][1])
+    w_np = (age_g2_freq[p_age].sum() * (age_g2_freq[p_age][0] + age_g2_freq[up_age][0])) / (
+            age_g2_freq.values.sum() * age_g2_freq[p_age][0])
+    w_nu = (age_g2_freq[up_age].sum() * (age_g2_freq[p_age][0] + age_g2_freq[up_age][0])) / (
+            age_g2_freq.values.sum() * age_g2_freq[up_age][0])
+
+    weights = [[w_pp, w_pu, w_np, w_nu]]
+    pd.DataFrame(weights,
+                 columns=['Positive outcome - Privileged Group', 'Positive outcome - Unprivileged Group',
+                          'Negative outcome - Privileged Group', 'Negative outcome - Unprivileged Group']).to_csv(
+        'out/weights_g2_age.csv', index=False)
+
+    # applying the weights to calculate spd and di
+    w_spd_g2_age = (w_pu * age_g2_freq[up_age][1] / (w_pu * age_g2_freq[up_age][1] + w_nu * age_g2_freq[up_age][0])) - (
+            w_pp * age_g2_freq[p_age][1] / (w_pp * age_g2_freq[p_age][1] + w_np * age_g2_freq[p_age][0]))
+    w_di_g2_age = (w_pu * age_g2_freq[up_age][1] / (w_pu * age_g2_freq[up_age][1] + w_nu * age_g2_freq[up_age][0])) / (
+            w_pp * age_g2_freq[p_age][1] / (w_pp * age_g2_freq[p_age][1] + w_np * age_g2_freq[p_age][0]))
+
+    # weights for G3 and age
+    w_pp = (age_g3_freq[p_age].sum() * (age_g3_freq[p_age][1] + age_g3_freq[up_age][1])) / (
+            age_g3_freq.values.sum() * age_g3_freq[p_age][1])
+    w_pu = (age_g3_freq[up_age].sum() * (age_g3_freq[p_age][1] + age_g3_freq[up_age][1])) / (
+            age_g3_freq.values.sum() * age_g3_freq[up_age][1])
+    w_np = (age_g3_freq[p_age].sum() * (age_g3_freq[p_age][0] + age_g3_freq[up_age][0])) / (
+            age_g3_freq.values.sum() * age_g3_freq[p_age][0])
+    w_nu = (age_g3_freq[up_age].sum() * (age_g3_freq[p_age][0] + age_g3_freq[up_age][0])) / (
+            age_g3_freq.values.sum() * age_g3_freq[up_age][0])
+
+    weights = [[w_pp, w_pu, w_np, w_nu]]
+    pd.DataFrame(weights,
+                 columns=['Positive outcome - Privileged Group', 'Positive outcome - Unprivileged Group',
+                          'Negative outcome - Privileged Group', 'Negative outcome - Unprivileged Group']).to_csv(
+        'out/weights_g3_age.csv', index=False)
+
+    # applying the weights to calculate spd and di
+    w_spd_g3_age = (w_pu * age_g3_freq[up_age][1] / (w_pu * age_g3_freq[up_age][1] + w_nu * age_g3_freq[up_age][0])) - (
+            w_pp * age_g3_freq[p_age][1] / (w_pp * age_g3_freq[p_age][1] + w_np * age_g3_freq[p_age][0]))
+    w_di_g3_age = (w_pu * age_g3_freq[up_age][1] / (w_pu * age_g3_freq[up_age][1] + w_nu * age_g3_freq[up_age][0])) / (
+            w_pp * age_g3_freq[p_age][1] / (w_pp * age_g3_freq[p_age][1] + w_np * age_g3_freq[p_age][0]))
+
+    # weights for G1 and sex
+    w_pp = (sex_g1_freq[p_sex].sum() * (sex_g1_freq[p_sex][1] + sex_g1_freq[up_sex][1])) / (
+            sex_g1_freq.values.sum() * sex_g1_freq[p_sex][1])
+    w_pu = (sex_g1_freq[up_sex].sum() * (sex_g1_freq[p_sex][1] + sex_g1_freq[up_sex][1])) / (
+            sex_g1_freq.values.sum() * sex_g1_freq[up_sex][1])
+    w_np = (sex_g1_freq[p_sex].sum() * (sex_g1_freq[p_sex][0] + sex_g1_freq[up_sex][0])) / (
+            sex_g1_freq.values.sum() * sex_g1_freq[p_sex][0])
+    w_nu = (sex_g1_freq[up_sex].sum() * (sex_g1_freq[p_sex][0] + sex_g1_freq[up_sex][0])) / (
+            sex_g1_freq.values.sum() * sex_g1_freq[up_sex][0])
+
+    weights = [[w_pp, w_pu, w_np, w_nu]]
+    pd.DataFrame(weights,
+                 columns=['Positive outcome - Privileged Group', 'Positive outcome - Unprivileged Group',
+                          'Negative outcome - Privileged Group', 'Negative outcome - Unprivileged Group']).to_csv(
+        'out/weights_g1_sex.csv', index=False)
+
+    # applying the weights to calculate spd and di
+    w_spd_g1_sex = (w_pu * sex_g1_freq[up_sex][1] / (w_pu * sex_g1_freq[up_sex][1] + w_nu * sex_g1_freq[up_sex][0])) - (
+            w_pp * sex_g1_freq[p_sex][1] / (w_pp * sex_g1_freq[p_sex][1] + w_np * sex_g1_freq[p_sex][0]))
+    w_di_g1_sex = (w_pu * sex_g1_freq[up_sex][1] / (w_pu * sex_g1_freq[up_sex][1] + w_nu * sex_g1_freq[up_sex][0])) / (
+            w_pp * sex_g1_freq[p_sex][1] / (w_pp * sex_g1_freq[p_sex][1] + w_np * sex_g1_freq[p_sex][0]))
+
+    # weights for G2 and sex
+    w_pp = (sex_g2_freq[p_sex].sum() * (sex_g2_freq[p_sex][1] + sex_g2_freq[up_sex][1])) / (
+            sex_g2_freq.values.sum() * sex_g2_freq[p_sex][1])
+    w_pu = (sex_g2_freq[up_sex].sum() * (sex_g2_freq[p_sex][1] + sex_g2_freq[up_sex][1])) / (
+            sex_g2_freq.values.sum() * sex_g2_freq[up_sex][1])
+    w_np = (sex_g2_freq[p_sex].sum() * (sex_g2_freq[p_sex][0] + sex_g2_freq[up_sex][0])) / (
+            sex_g2_freq.values.sum() * sex_g2_freq[p_sex][0])
+    w_nu = (sex_g2_freq[up_sex].sum() * (sex_g2_freq[p_sex][0] + sex_g2_freq[up_sex][0])) / (
+            sex_g2_freq.values.sum() * sex_g2_freq[up_sex][0])
+
+    weights = [[w_pp, w_pu, w_np, w_nu]]
+    pd.DataFrame(weights,
+                 columns=['Positive outcome - Privileged Group', 'Positive outcome - Unprivileged Group',
+                          'Negative outcome - Privileged Group', 'Negative outcome - Unprivileged Group']).to_csv(
+        'out/weights_g2_sex.csv', index=False)
+
+    # applying the weights to calculate spd and di
+    w_spd_g2_sex = (w_pu * sex_g2_freq[up_sex][1] / (w_pu * sex_g2_freq[up_sex][1] + w_nu * sex_g2_freq[up_sex][0])) - (
+            w_pp * sex_g2_freq[p_sex][1] / (w_pp * sex_g2_freq[p_sex][1] + w_np * sex_g2_freq[p_sex][0]))
+    w_di_g2_sex = (w_pu * sex_g2_freq[up_sex][1] / (w_pu * sex_g2_freq[up_sex][1] + w_nu * sex_g2_freq[up_sex][0])) / (
+            w_pp * sex_g2_freq[p_sex][1] / (w_pp * sex_g2_freq[p_sex][1] + w_np * sex_g2_freq[p_sex][0]))
+
+    # weights for G3 and sex
+    w_pp = (sex_g3_freq[p_sex].sum() * (sex_g3_freq[p_sex][1] + sex_g3_freq[up_sex][1])) / (
+            sex_g3_freq.values.sum() * sex_g3_freq[p_sex][1])
+    w_pu = (sex_g3_freq[up_sex].sum() * (sex_g3_freq[p_sex][1] + sex_g3_freq[up_sex][1])) / (
+            sex_g3_freq.values.sum() * sex_g3_freq[up_sex][1])
+    w_np = (sex_g3_freq[p_sex].sum() * (sex_g3_freq[p_sex][0] + sex_g3_freq[up_sex][0])) / (
+            sex_g3_freq.values.sum() * sex_g3_freq[p_sex][0])
+    w_nu = (sex_g3_freq[up_sex].sum() * (sex_g3_freq[p_sex][0] + sex_g3_freq[up_sex][0])) / (
+            sex_g3_freq.values.sum() * sex_g3_freq[up_sex][0])
+
+    weights = [[w_pp, w_pu, w_np, w_nu]]
+    pd.DataFrame(weights,
+                 columns=['Positive outcome - Privileged Group', 'Positive outcome - Unprivileged Group',
+                          'Negative outcome - Privileged Group', 'Negative outcome - Unprivileged Group']).to_csv(
+        'out/weights_g3_sex.csv', index=False)
+
+    # applying the weights to calculate spd and di
+    w_spd_g3_sex = (w_pu * sex_g3_freq[up_sex][1] / (w_pu * sex_g3_freq[up_sex][1] + w_nu * sex_g3_freq[up_sex][0])) - (
+            w_pp * sex_g3_freq[p_sex][1] / (w_pp * sex_g3_freq[p_sex][1] + w_np * sex_g3_freq[p_sex][0]))
+    w_di_g3_sex = (w_pu * sex_g3_freq[up_sex][1] / (w_pu * sex_g3_freq[up_sex][1] + w_nu * sex_g3_freq[up_sex][0])) / (
+            w_pp * sex_g3_freq[p_sex][1] / (w_pp * sex_g3_freq[p_sex][1] + w_np * sex_g3_freq[p_sex][0]))
+
+    w_spd_data = [['G1', 'Age', w_spd_g1_age], ['G2', 'Age', w_spd_g2_age], ['G3', 'Age', w_spd_g3_age],
+                  ['G1', 'Sex', w_spd_g1_sex], ['G2', 'Sex', w_spd_g2_sex], ['G3', 'Sex', w_spd_g3_sex]]
+
+    pd.DataFrame(w_spd_data,
+                 columns=['Dependent Variable', 'Protected Class Variable', 'Statistical Parity Difference']).to_csv(
+        'out/w_spd.csv', index=False)
+
+    w_di_data = [['G1', 'Age', w_di_g1_age], ['G2', 'Age', w_di_g2_age], ['G3', 'Age', w_di_g3_age],
+                 ['G1', 'Sex', w_di_g1_sex], ['G2', 'Sex', w_di_g2_sex], ['G3', 'Sex', w_di_g3_sex]]
+
+    pd.DataFrame(w_di_data,
+                 columns=['Dependent Variable', 'Protected Class Variable', 'Disparate Impact']).to_csv(
+        'out/w_di.csv', index=False)
 
 
 def STEP4():
