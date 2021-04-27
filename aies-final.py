@@ -419,44 +419,44 @@ def STEP3():
     weighted_df.loc[weighted_df['age'].between(18, 22, inclusive=True), ['age_group']] = '18-22'
     weighted_df['G1_PassFail'] = pd.cut(weighted_df.G1, bins=bins, labels=labels, include_lowest=True)
     weighted_df['G2_PassFail'] = pd.cut(weighted_df.G2, bins=bins, labels=labels, include_lowest=True)
-    weighted_df['G3_PassFail'] = pd.cut(weighted_df.G3, bins=bins, labels=labels, include_lowest=True)
+    # weighted_df['G3_PassFail'] = pd.cut(weighted_df.G3, bins=bins, labels=labels, include_lowest=True)
 
     # add weight columns as floats
     weighted_df['G1_Weighted'] = weighted_df['G1'] + 0.0
     weighted_df['G2_Weighted'] = weighted_df['G2'] + 0.0
-    weighted_df['G3_Weighted'] = weighted_df['G3'] + 0.0
+    # weighted_df['G3_Weighted'] = weighted_df['G3'] + 0.0
 
     # outcome: // PO PG == female 15-17 e.g. row 2
     p_pos = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G1_PassFail'] == 1)
     weighted_df.loc[p_pos, 'G1_Weighted'] = weighted_df.loc[p_pos, 'G1_Weighted'] * (w_pp_age_g1 + w_pp_sex_g1)
     p_pos = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G2_PassFail'] == 1)
     weighted_df.loc[p_pos, 'G2_Weighted'] = weighted_df.loc[p_pos, 'G2_Weighted'] * (w_pp_age_g2 + w_pp_sex_g2)
-    p_pos = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G3_PassFail'] == 1)
-    weighted_df.loc[p_pos, 'G3_Weighted'] = weighted_df.loc[p_pos, 'G3_Weighted'] * (w_pp_age_g3 + w_pp_sex_g3)
+    # p_pos = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G3_PassFail'] == 1)
+    # weighted_df.loc[p_pos, 'G3_Weighted'] = weighted_df.loc[p_pos, 'G3_Weighted'] * (w_pp_age_g3 + w_pp_sex_g3)
 
     # outcome: // PO UG == male 18-22 e.g. row 229
     up_pos = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G1_PassFail'] == 1)
     weighted_df.loc[up_pos, 'G1_Weighted'] = weighted_df.loc[up_pos, 'G1_Weighted'] * (w_pu_age_g1 + w_pu_sex_g1)
     up_pos = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G2_PassFail'] == 1)
     weighted_df.loc[up_pos, 'G2_Weighted'] = weighted_df.loc[up_pos, 'G2_Weighted'] * (w_pu_age_g2 + w_pu_sex_g2)
-    up_pos = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G3_PassFail'] == 1)
-    weighted_df.loc[up_pos, 'G3_Weighted'] = weighted_df.loc[up_pos, 'G3_Weighted'] * (w_pu_age_g3 + w_pu_sex_g3)
+    # up_pos = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G3_PassFail'] == 1)
+    # weighted_df.loc[up_pos, 'G3_Weighted'] = weighted_df.loc[up_pos, 'G3_Weighted'] * (w_pu_age_g3 + w_pu_sex_g3)
 
     # outcome: // NO PG == female 15-17 e.g. row
     p_neg = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G1_PassFail'] == 0)
     weighted_df.loc[p_neg, 'G1_Weighted'] = weighted_df.loc[p_neg, 'G1_Weighted'] * (w_np_age_g1 + w_np_sex_g1)
     p_neg = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G2_PassFail'] == 0)
     weighted_df.loc[p_neg, 'G2_Weighted'] = weighted_df.loc[p_neg, 'G2_Weighted'] * (w_np_age_g2 + w_np_sex_g2)
-    p_neg = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G3_PassFail'] == 0)
-    weighted_df.loc[p_neg, 'G3_Weighted'] = weighted_df.loc[p_neg, 'G3_Weighted'] * (w_np_age_g3 + w_np_sex_g3)
+    # p_neg = (weighted_df['sex'] == p_sex) & (weighted_df['age_group'] == p_age) & (weighted_df['G3_PassFail'] == 0)
+    # weighted_df.loc[p_neg, 'G3_Weighted'] = weighted_df.loc[p_neg, 'G3_Weighted'] * (w_np_age_g3 + w_np_sex_g3)
 
     # outcome: // NO UG == male 18-22 e.g. row 165
     up_neg = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G1_PassFail'] == 0)
     weighted_df.loc[up_neg, 'G1_Weighted'] = weighted_df.loc[up_neg, 'G1_Weighted'] * (w_nu_age_g1 + w_nu_sex_g1)
     up_neg = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G2_PassFail'] == 0)
     weighted_df.loc[up_neg, 'G2_Weighted'] = weighted_df.loc[up_neg, 'G2_Weighted'] * (w_nu_age_g2 + w_nu_sex_g2)
-    up_neg = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G3_PassFail'] == 0)
-    weighted_df.loc[up_neg, 'G3_Weighted'] = weighted_df.loc[up_neg, 'G3_Weighted'] * (w_nu_age_g3 + w_nu_sex_g3)
+    # up_neg = (weighted_df['sex'] == up_sex) & (weighted_df['age_group'] == up_age) & (weighted_df['G3_PassFail'] == 0)
+    # weighted_df.loc[up_neg, 'G3_Weighted'] = weighted_df.loc[up_neg, 'G3_Weighted'] * (w_nu_age_g3 + w_nu_sex_g3)
 
     weighted_df.to_csv('out/weighted.csv', index=False)
 
@@ -467,22 +467,16 @@ def STEP4():
     raw_df = pd.read_csv(r"dataset/student-por.csv", delimiter=',')
     df = raw_df.replace({'higher': {'yes': True, 'no': False}})
 
-    # print("Number of records: ")
-    # r, c = df.shape
-    # print("rows: ", r)
-    # print("columns: ", c)
-    # print()
-
-    num_rows = int(len(df))
+    df_num_rows = int(len(df))
 
     # split data into train and test sets
     shuffled = df.sample(frac=1)
-    df_train = shuffled.iloc[:int(num_rows / 2)]
-    df_test = shuffled.iloc[int(num_rows / 2):]
+    df_train = shuffled.iloc[:int(df_num_rows / 2)]
+    df_test = shuffled.iloc[int(df_num_rows / 2):]
 
     # classify data Y in this case is G3. Features are G1 and G2,
 
-    features = ['failures', 'Medu', 'studytime', 'absences', 'G1', 'G2', 'higher']
+    features = ['failures', 'Medu', 'Fedu', 'studytime', 'absences', 'G1', 'G2', 'higher']
     y_feature = 'G3'
 
     # create training data
@@ -500,13 +494,38 @@ def STEP4():
     df_test_x['Predicted Grade'] = predicted
     df_test_x['Actual Grade'] = df_test[y_feature]
 
-    # TODO create a classifier for the data from Step 3.3
+    # create a classifier for the data from Step 3.3
+    weighted_raw_df = pd.read_csv(r"out/weighted.csv", delimiter=',')
+    weighted_df = weighted_raw_df.replace({'higher': {'yes': True, 'no': False}})
+    weighted_df_num_rows = int(len(weighted_df))
 
-    print(df_test_x.head())
+    # split data into train and test sets
+    weighted_shuffled = weighted_df.sample(frac=1)
+    weighted_df_train = weighted_shuffled.iloc[:int(weighted_df_num_rows / 2)]
+    weighted_df_test = weighted_shuffled.iloc[int(weighted_df_num_rows / 2):]
+
+    # create training data
+    features = ['failures', 'Medu', 'Fedu', 'studytime', 'absences', 'G1_Weighted', 'G2_Weighted', 'higher']
+    weighted_df_train_x = weighted_df_train[features]
+    weighted_df_train_y = weighted_df_train[y_feature]
+
+    # create and train classifier
+    weighted_classifier = DecisionTreeClassifier()
+    weighted_classifier.fit(weighted_df_train_x, weighted_df_train_y)
+
+    # run classifier against the test set
+    weighted_df_test_x = weighted_df_test[features]
+    weighted_predicted = weighted_classifier.predict(weighted_df_test_x)
+
+    weighted_df_test_x['Predicted Grade'] = weighted_predicted
+    weighted_df_test_x['Actual Grade'] = weighted_df_test[y_feature]
+
+    df_test_x.to_csv('out/predicted_g3-unweighted.csv', index=False)
+    weighted_df_test_x.to_csv('out/predicted_g3-weighted.csv', index=False)
 
 
 if __name__ == '__main__':
     # STEP1()
     # STEP2()
-    STEP3()
-    # STEP4()
+    # STEP3()
+    STEP4()
