@@ -549,20 +549,28 @@ def STEP4():
 
     # spd of weighted for weighted dataset
     spd_g3_sex_transformed = (sex_g3_freq_transformed[up_sex][1] / (
-                sex_g3_freq_transformed[up_sex][1] + sex_g3_freq_transformed[up_sex][0])) - (
-                                         sex_g3_freq_transformed[p_sex][1] / (
-                                             sex_g3_freq_transformed[p_sex][1] + sex_g3_freq_transformed[p_sex][0]))
+            sex_g3_freq_transformed[up_sex][1] + sex_g3_freq_transformed[up_sex][0])) - (
+                                     sex_g3_freq_transformed[p_sex][1] / (
+                                     sex_g3_freq_transformed[p_sex][1] + sex_g3_freq_transformed[p_sex][0]))
 
     # disparate impact G3 and sex for weighted dataset
     di_g3_sex_transformed = (sex_g3_freq_transformed[up_sex][1] / (
-                sex_g3_freq_transformed[up_sex][1] + sex_g3_freq_transformed[up_sex][0])) / (
-                                        sex_g3_freq_transformed[p_sex][1] / (
-                                            sex_g3_freq_transformed[p_sex][1] + sex_g3_freq_transformed[p_sex][0]))
+            sex_g3_freq_transformed[up_sex][1] + sex_g3_freq_transformed[up_sex][0])) / (
+                                    sex_g3_freq_transformed[p_sex][1] / (
+                                    sex_g3_freq_transformed[p_sex][1] + sex_g3_freq_transformed[p_sex][0]))
     print("SPD original: {}".format(spd_g3_sex_og))
     print("DI original: {}".format(di_g3_sex_og))
 
     print("SPD weighted: {}".format(spd_g3_sex_transformed))
     print("DI weighted: {}".format(di_g3_sex_transformed))
+
+    outcomes = pd.DataFrame(columns=['Independent Variable', 'Metric', 'Original', 'Transformed', 'Difference'])
+    outcomes[len(outcomes)] = ['Sex', 'Statistical Parity Difference', spd_g3_sex_og, spd_g3_sex_transformed,
+                               abs(spd_g3_sex_og - spd_g3_sex_transformed)]
+    outcomes[len(outcomes)] = ['Sex', 'Disparate Impact', di_g3_sex_og, di_g3_sex_transformed,
+                               abs(di_g3_sex_og - di_g3_sex_transformed)]
+
+    outcomes.to_csv('out/fairness_metrics_classified.csv', index=False)
 
 
 if __name__ == '__main__':
