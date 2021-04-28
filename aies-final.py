@@ -462,15 +462,8 @@ def STEP3():
 
 
 def STEP4():
-    # school,sex,age,address,famsize,Pstatus,Medu,Fedu,Mjob,Fjob,reason,guardian,traveltime,studytime,failures,schoolsup,famsup,paid,activities,nursery,higher,internet,romantic,famrel,freetime,goout,Dalc,Walc,health,absences,G1,G2,G3
-    bins = [0, 11, 19]
-    labels = [0, 1]
-
     raw_df = pd.read_csv(r"dataset/student-por.csv", delimiter=',')
-    df = raw_df.replace({'higher': {'yes': True, 'no': False}})
-    df['G1_PassFail'] = pd.cut(df.G1, bins=bins, labels=labels, include_lowest=True)
-    df['G2_PassFail'] = pd.cut(df.G2, bins=bins, labels=labels, include_lowest=True)
-    df['G3_PassFail'] = pd.cut(df.G3, bins=bins, labels=labels, include_lowest=True)
+    df = raw_df.replace({'sex': {'M': 0, 'F': 1}})
 
     df_num_rows = int(len(df))
 
@@ -481,13 +474,15 @@ def STEP4():
 
     # classify data Y in this case is G3. Features are G1 and G2,
 
-    features = ['failures', 'Medu', 'Fedu', 'studytime', 'absences', 'G1', 'G2', 'higher']
+    features = ['sex', 'G1', 'G2']
     y_feature = 'G3'
 
     # create training data
     df_train_x = df_train[features]
     df_train_y = df_train[y_feature]
 
+    print(df_train_x.head())
+    print(df_train_y.head())
     # create and train classifier
     orig_classifier = DecisionTreeClassifier()
     orig_classifier.fit(df_train_x, df_train_y)
@@ -497,12 +492,12 @@ def STEP4():
     predicted = orig_classifier.predict(df_test_x)
 
     df_test_x['G3_Predicted'] = predicted
-    df_test_x['G3_PassFail_Predicted'] = pd.cut(df_test_x['G3_Predicted'], bins=bins, labels=labels, include_lowest=True)
-    df_test_x['G3_PassFail_Actual'] = pd.cut(df_test_x.G3, bins=bins, labels=labels, include_lowest=True)
+    df_test_x['G3_Actual'] = df_test[y_feature]
 
     # create a classifier for the data from Step 3.3
     weighted_raw_df = pd.read_csv(r"out/weighted.csv", delimiter=',')
-    weighted_df = weighted_raw_df.replace({'higher': {'yes': True, 'no': False}})
+    weighted_df = weighted_raw_df.replace({'sex': {'Male': 0, 'Female': 1}})
+
     weighted_df_num_rows = int(len(weighted_df))
 
     # split data into train and test sets
@@ -511,8 +506,8 @@ def STEP4():
     weighted_df_test = weighted_shuffled.iloc[int(weighted_df_num_rows / 2):]
 
     # create training data
-    features = ['failures', 'Medu', 'Fedu', 'studytime', 'absences', 'G1_Weighted', 'G2_Weighted', 'higher']
-    y_feature = 'G3_Weighted'
+    features = ['sex', 'G1_Weighted', 'G2_Weighted']
+    y_feature = 'G3'
     weighted_df_train_x = weighted_df_train[features]
     weighted_df_train_y = weighted_df_train[y_feature]
 
@@ -524,9 +519,8 @@ def STEP4():
     weighted_df_test_x = weighted_df_test[features]
     weighted_predicted = weighted_classifier.predict(weighted_df_test_x)
 
-    weighted_df_test_x['G3_Predicted'] = weighted_predicted
-    weighted_df_test_x['G3_PassFail_Predicted'] = pd.cut(weighted_df_test_x['G3_Predicted'], bins=bins, labels=labels, include_lowest=True)
-    weighted_df_test_x['G3_PassFail_Actual'] = pd.cut(weighted_df_test_x['G3_Weighted'], bins=bins, labels=labels, include_lowest=True)
+    weighted_df_test_x['Predicted Grade'] = weighted_predicted
+    weighted_df_test_x['Actual Grade'] = weighted_df_test[y_feature]
 
     df_test_x.to_csv('out/predicted_g3-unweighted.csv', index=False)
     weighted_df_test_x.to_csv('out/predicted_g3-weighted.csv', index=False)
