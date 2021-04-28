@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib
 from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.tree import DecisionTreeClassifier
+from matplotlip.lines import Line2D
 
 import seaborn as sns
 from scipy.stats import pearsonr
@@ -459,6 +460,55 @@ def STEP3():
     # weighted_df.loc[up_neg, 'G3_Weighted'] = weighted_df.loc[up_neg, 'G3_Weighted'] * (w_nu_age_g3 + w_nu_sex_g3)
 
     weighted_df.to_csv('out/weighted.csv', index=False)
+
+    for i in range(0, 6):
+        spd_i = spd_data[i]
+        plt.axhline(y=spd_i[2], color='blue')
+        plt.axhspan(-0.05, 0.05, alpha=0.5, color='#ffb6c1')
+        axes = plt.gca()
+        axes.set_ylim([-0.75, 0.75])
+        plt.grid(True, axis='y', alpha=0.2, color='#999999')
+        plt.title('Statistical Parity Difference (' + spd_i[0] + ' and ' + spd_i[1] + ')')
+        plt.legend([Line2D([0], [0], color='blue', lw=2), Line2D([0], [0], color='#ffb6c1', lw=6)],
+                   ['SPD = ' + str(spd_i[2]), 'Fairness range'])
+        plt.savefig('out/spd_' + spd_i[0] + '_' + spd_i[1] + '.png')
+        plt.close()
+
+        di_i = di_data[i]
+        plt.axhline(y=di_i[2], color='blue')
+        plt.axhline(y=1, color='red')
+        axes = plt.gca()
+        axes.set_ylim([0, 2])
+        plt.grid(True, axis='y', alpha=0.2, color='#999999')
+        plt.title('Disparate Impact (' + di_i[0] + ' and ' + di_i[1] + ')')
+        plt.legend([Line2D([0], [0], color='blue', lw=2), Line2D([0], [0], color='red', lw=2)],
+                   ['DI = ' + str(di_i[2]), 'Fair=1'])
+        plt.savefig('out/di_' + di_i[0] + '_' + di_i[1] + '.png')
+        plt.close()
+
+        w_spd_i = w_spd_data[i]
+        plt.axhline(y=w_spd_i[2], color='blue')
+        plt.axhspan(-0.05, 0.05, alpha=0.5, color='#ffb6c1')
+        axes = plt.gca()
+        axes.set_ylim([-0.75, 0.75])
+        plt.grid(True, axis='y', alpha=0.2, color='#999999')
+        plt.title('Statistical Parity Difference (' + w_spd_i[0] + ' and ' + w_spd_i[1] + ') After Re-weighting')
+        plt.legend([Line2D([0], [0], color='blue', lw=2), Line2D([0], [0], color='#ffb6c1', lw=6)],
+                   ['SPD = ' + str(w_spd_i[2]), 'Fairness range'])
+        plt.savefig('out/w_spd_' + w_spd_i[0] + '_' + w_spd_i[1] + '.png')
+        plt.close()
+
+        w_di_i = w_di_data[i]
+        plt.axhline(y=1, color='red')
+        plt.axhline(y=w_di_i[2], color='blue')
+        axes = plt.gca()
+        axes.set_ylim([0, 2])
+        plt.grid(True, axis='y', alpha=0.2, color='#999999')
+        plt.legend([Line2D([0], [0], color='blue', lw=2), Line2D([0], [0], color='red', lw=2)],
+                   ['DI = ' + str(w_di_i[2]), 'Fair=1'])
+        plt.title('Disparate Impact (' + w_di_i[0] + ' and ' + w_di_i[1] + ') After Re-weighting')
+        plt.savefig('out/w_di_' + w_di_i[0] + '_' + w_di_i[1] + '.png')
+        plt.close()
 
 
 def STEP4():
