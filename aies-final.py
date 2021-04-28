@@ -572,6 +572,39 @@ def STEP4():
 
     outcomes.to_csv('out/fairness_metrics_classified.csv', index=False)
 
+    # Plots for step 5 #TODO Make these pretty
+    plt.clf()
+    plt.axhline(y=0, color='r', label='Fair (0)')
+    plt.axhline(spd_g3_sex_og, label="SPD ({:.5f})".format(spd_g3_sex_og))
+    plt.title("Statistical Parity Difference - Classified Original Dataset")
+    plt.ylim(-0.20, 0.20)
+    plt.legend()
+    plt.show()
+
+    plt.clf()
+    plt.axhline(y=0, color='r', label='Fair (0)')
+    plt.axhline(di_g3_sex_og, label="Disparate Impact ({:.5f})".format(di_g3_sex_og))
+    plt.title("Disparate Impact - Classified Original Dataset")
+    plt.ylim(-1, 1)
+    plt.legend()
+    plt.show()
+
+    plt.clf()
+    plt.axhline(y=0, color='r', label='Fair (0)')
+    plt.axhline(spd_g3_sex_transformed, label="SPD ({:.5f})".format(spd_g3_sex_transformed))
+    plt.title("Statistical Parity Difference - Classified Transformed Dataset")
+    plt.ylim(-0.20, 0.20)
+    plt.legend()
+    plt.show()
+
+    plt.clf()
+    plt.axhline(y=0, color='r', label='Fair (0)')
+    plt.axhline(di_g3_sex_transformed, label="Disparate Impact ({:.5f})".format(di_g3_sex_transformed))
+    plt.title("Disparate Impact - Classified Transformed Dataset")
+    plt.ylim(-1, 1)
+    plt.legend()
+    plt.show()
+
 
 if __name__ == '__main__':
     # STEP1()
