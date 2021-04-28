@@ -566,9 +566,9 @@ def STEP4():
 
     outcomes = pd.DataFrame(columns=['Independent Variable', 'Metric', 'Original', 'Transformed', 'Difference'])
     outcomes.loc[len(outcomes)] = ['Sex', 'Statistical Parity Difference', spd_g3_sex_og, spd_g3_sex_transformed,
-                               abs(spd_g3_sex_og - spd_g3_sex_transformed)]
+                                   spd_g3_sex_og - spd_g3_sex_transformed]
     outcomes.loc[len(outcomes)] = ['Sex', 'Disparate Impact', di_g3_sex_og, di_g3_sex_transformed,
-                               abs(di_g3_sex_og - di_g3_sex_transformed)]
+                                   di_g3_sex_og - di_g3_sex_transformed]
 
     outcomes.to_csv('out/fairness_metrics_classified.csv', index=False)
 
