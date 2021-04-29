@@ -1,0 +1,7 @@
+Dependent Variable,Protected Class Variable,Disparate Impact
+G1,Age,1.0000000000000002
+G2,Age,1.0
+G3,Age,1.0000000000000002
+G1,Sex,1.0000000000000002
+G2,Sex,1.0
+G3,Sex,1.0
