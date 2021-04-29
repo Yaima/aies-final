@@ -1,4 +1,5 @@
 import random
+import math
 
 import pandas as pd
 import numpy as np
@@ -628,17 +629,19 @@ def STEP4():
     plt.axhline(spd_g3_sex_og, label="SPD ({:.5f})".format(spd_g3_sex_og))
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.title("Statistical Parity Difference - Classified Original Dataset")
-    plt.ylim(-0.20, 0.20)
+    top = math.ceil(abs(spd_g3_sex_og) + .3)
+    plt.ylim(-top, top)
     plt.savefig('out/spd_g3_sex_og.png', bbox_inches='tight')
     plt.legend()
     plt.show()
 
     plt.clf()
-    plt.axhline(y=0, color='r', label='Fair (0)')
+    plt.axhline(y=1, color='r', label='Fair (1)')
     plt.axhline(di_g3_sex_og, label="Disparate Impact ({:.5f})".format(di_g3_sex_og))
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.title("Disparate Impact - Classified Original Dataset")
-    plt.ylim(-1, 1)
+    top = math.ceil(abs(di_g3_sex_og) + .3 + 1)
+    plt.ylim(-top, top)
     plt.legend()
     plt.savefig('out/di_g3_sex_og.png', bbox_inches='tight')
     plt.show()
@@ -648,17 +651,19 @@ def STEP4():
     plt.axhline(spd_g3_sex_transformed, label="SPD ({:.5f})".format(spd_g3_sex_transformed))
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.title("Statistical Parity Difference - Classified Transformed Dataset")
-    plt.ylim(-0.20, 0.20)
+    top = math.ceil(abs(spd_g3_sex_transformed) + .3)
+    plt.ylim(-top, top)
     plt.legend()
     plt.savefig('out/spd_g3_sex_transformed.png', bbox_inches='tight')
     plt.show()
 
     plt.clf()
-    plt.axhline(y=0, color='r', label='Fair (0)')
+    plt.axhline(y=1, color='r', label='Fair (1)')
     plt.axhline(di_g3_sex_transformed, label="Disparate Impact ({:.5f})".format(di_g3_sex_transformed))
     plt.grid(True, axis='y', alpha=0.2, color='#999999')
     plt.title("Disparate Impact - Classified Transformed Dataset")
-    plt.ylim(-1, 1)
+    top = math.ceil(abs(di_g3_sex_transformed) + .3 + 1)
+    plt.ylim(-top, top)
     plt.legend()
     plt.savefig('out/di_g3_sex_transformed.png', bbox_inches='tight')
     plt.show()
