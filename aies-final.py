@@ -669,7 +669,7 @@ def STEP4():
     plt.show()
 
 if __name__ == '__main__':
-    # STEP1()
-    # STEP2()
-    # STEP3()
+    STEP1()
+    STEP2()
+    STEP3()
     STEP4()
