@@ -1,18 +1,9 @@
-import random
 import math
 
 import pandas as pd
-import numpy as np
-import scipy as sp
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from sklearn.preprocessing import KBinsDiscretizer
 from sklearn.tree import DecisionTreeClassifier
-
-
-import seaborn as sns
-from scipy.stats import pearsonr
-from itertools import cycle
 
 
 def STEP1():
@@ -667,6 +658,7 @@ def STEP4():
     plt.legend()
     plt.savefig('out/di_g3_sex_transformed.png', bbox_inches='tight')
     plt.show()
+
 
 if __name__ == '__main__':
     STEP1()
